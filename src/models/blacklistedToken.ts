@@ -1,17 +1,17 @@
 import { Schema, model } from 'mongoose';
 
-export interface tokenModel {
+export interface blackListedTokenModel {
   blackListedToken: string;
 }
 
-const blackListedTokenSchema = new Schema<tokenModel>({
+const blackListedTokenSchema = new Schema<blackListedTokenModel>({
   blackListedToken: {
     type: String,
     required: true,
   },
 });
 
-export const BlackListedToken = model<tokenModel>(
+export const BlackListedToken = model<blackListedTokenModel>(
   'BlackListedToken',
   blackListedTokenSchema
 );
