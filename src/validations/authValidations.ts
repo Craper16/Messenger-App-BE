@@ -36,3 +36,18 @@ export const SignUpValidations = [
     .isLength({ max: 8 })
     .withMessage('Phone number must not exceed 8 numbers'),
 ];
+
+export const SignInValidations = [
+  check('email')
+    .isEmail()
+    .withMessage('Invalid email entered')
+    .notEmpty()
+    .withMessage('Email must not be empty')
+    .toLowerCase()
+    .trim(),
+  check('password')
+    .isString()
+    .withMessage('Password must be a string')
+    .notEmpty()
+    .withMessage('Password must not be empty'),
+];

@@ -1,7 +1,7 @@
 import { Result, ValidationError } from 'express-validator';
 import { ErrorResponse } from '../app';
 
-export const CheckForValidationErrors = (
+export const checkForValidationErrors = (
   validationErrors: Result<ValidationError>
 ) => {
   if (!validationErrors.isEmpty()) {

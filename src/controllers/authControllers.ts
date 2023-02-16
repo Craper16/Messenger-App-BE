@@ -1,24 +1,17 @@
 import { RequestHandler } from 'express';
 import { validationResult } from 'express-validator';
 import { ErrorResponse } from '../app';
-import { CheckForValidationErrors } from '../helpers/validationHelpers';
+import { checkForValidationErrors } from '../helpers/validationHelpers';
 import { UserModel } from '../models/user';
-import { signUp } from '../services/authServices';
-
-const errorFormatter = ({ msg }: any) => {
-  return { msg };
-};
+import { refresh, SignIn, signUp } from '../services/authServices';
 
 export const SignUpUser: RequestHandler = async (req, res, next) => {
-  const { displayName, email, password, phoneNumber } = req.body as UserModel;
+  const body = req.body as UserModel;
   try {
-    CheckForValidationErrors(validationResult(req));
+    checkForValidationErrors(validationResult(req));
 
     const signUpUser = await signUp({
-      displayName,
-      email,
-      password,
-      phoneNumber,
+      ...body,
     });
 
     if (signUpUser?.status !== 201) {
@@ -37,6 +30,63 @@ export const SignUpUser: RequestHandler = async (req, res, next) => {
       email: signUpUser.user?.email,
       phoneNumber: signUpUser.user?.phoneNumber,
       displayName: signUpUser.user?.displayName,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const SignInUser: RequestHandler = async (req, res, next) => {
+  const body = req.body as { email: string; password: string };
+  try {
+    checkForValidationErrors(validationResult(req));
+
+    const signInUser = await SignIn({ ...body });
+
+    if (signInUser?.status !== 200) {
+      const error: ErrorResponse = {
+        message: signInUser?.message!,
+        name: signInUser?.name!,
+        status: signInUser?.status!,
+      };
+      throw error;
+    }
+
+    return res.status(signInUser.status).json({
+      access_token: signInUser.access_token,
+      refresh_token: signInUser.refresh_token,
+      userId: signInUser.user?._id,
+      email: signInUser.user?.email,
+      phoneNumber: signInUser.user?.phoneNumber,
+      displayName: signInUser.user?.displayName,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const RefreshTokens: RequestHandler = async (req, res, next) => {
+  const { refresh_token } = req.body as { refresh_token: string };
+
+  try {
+    const refreshUser = await refresh(refresh_token);
+
+    if (refreshUser?.status !== 200) {
+      const error: ErrorResponse = {
+        message: refreshUser?.message!,
+        name: refreshUser?.name!,
+        status: refreshUser?.status!,
+      };
+      throw error;
+    }
+
+    return res.status(refreshUser.status).json({
+      access_token: refreshUser.access_token,
+      refresh_token: refreshUser.refresh_token,
+      userId: refreshUser.user?._id,
+      email: refreshUser.user?.email,
+      phoneNumber: refreshUser.user?.phoneNumber,
+      displayName: refreshUser.user?.displayName,
     });
   } catch (error) {
     next(error);
