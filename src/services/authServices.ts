@@ -144,11 +144,11 @@ export const refresh = async (token: string) => {
     }
 
     const user = await User.findById(verifiedUserId);
-    const tokenAlreadyUsed = await BlackListedToken.find({
+    const tokenAlreadyUsed = await BlackListedToken.findOne({
       blackListedToken: token,
     });
 
-    if (tokenAlreadyUsed.length !== 0) {
+    if (tokenAlreadyUsed) {
       return {
         message: 'refresh token has already been used before',
         name: 'Already Used',
