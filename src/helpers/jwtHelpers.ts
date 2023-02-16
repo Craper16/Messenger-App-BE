@@ -1,5 +1,5 @@
 import { sign } from 'jsonwebtoken';
-import { BlackListedToken } from '../models/token';
+import { BlackListedToken } from '../models/blacklistedToken';
 
 interface userJWTSignData {
   email: string;

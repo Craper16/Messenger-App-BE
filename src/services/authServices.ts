@@ -7,7 +7,7 @@ import { hash, compare } from 'bcryptjs';
 
 import { User, UserModel } from '../models/user';
 import { JwtPayload, verify } from 'jsonwebtoken';
-import { BlackListedToken } from '../models/token';
+import { BlackListedToken } from '../models/blacklistedToken';
 
 export const signUp = async ({
   displayName,
