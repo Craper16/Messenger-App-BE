@@ -8,6 +8,7 @@ import { hash, compare } from 'bcryptjs';
 import { User, UserModel } from '../models/user';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { BlackListedToken } from '../models/blacklistedToken';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../consts/constants';
 
 export const signUp = async ({
   displayName,
@@ -51,6 +52,7 @@ export const signUp = async ({
       displayName: result.displayName,
       email: result.email,
       phoneNumber: result.phoneNumber,
+      grant_type: ACCESS_TOKEN,
     });
 
     const refresh_token = generateRefresh_Token({
@@ -58,6 +60,7 @@ export const signUp = async ({
       displayName: result.displayName,
       email: result.email,
       phoneNumber: result.phoneNumber,
+      grant_type: REFRESH_TOKEN,
     });
 
     return {
@@ -104,6 +107,7 @@ export const SignIn = async ({
       displayName: user.displayName,
       email: user.email,
       phoneNumber: user.phoneNumber,
+      grant_type: ACCESS_TOKEN,
     });
 
     const refresh_token = generateRefresh_Token({
@@ -111,6 +115,7 @@ export const SignIn = async ({
       displayName: user.displayName,
       email: user.email,
       phoneNumber: user.phoneNumber,
+      grant_type: REFRESH_TOKEN,
     });
 
     return { access_token, refresh_token, user, status: 200 };
@@ -127,6 +132,10 @@ export const refresh = async (token: string) => {
       | { message: string; name: string; status: number }
       | undefined = undefined;
 
+    let isTokenARefreshToken:
+      | { message: string; name: string; status: number }
+      | undefined = undefined;
+
     await verify(token, process.env.SECRET, (error, decoded) => {
       if (error) {
         return (isTokenVerified = {
@@ -135,12 +144,23 @@ export const refresh = async (token: string) => {
           status: 401,
         });
       }
-      const { userId } = decoded as JwtPayload;
+      const { userId, grant_type } = decoded as JwtPayload;
+      if (grant_type !== REFRESH_TOKEN) {
+        return (isTokenARefreshToken = {
+          message: 'invalid token token is not a refresh token',
+          name: 'Invalid Token',
+          status: 403,
+        });
+      }
       verifiedUserId = userId;
     });
 
     if (isTokenVerified) {
       return isTokenVerified;
+    }
+
+    if (isTokenARefreshToken) {
+      return isTokenARefreshToken;
     }
 
     const user = await User.findById(verifiedUserId);
@@ -165,6 +185,7 @@ export const refresh = async (token: string) => {
       displayName: user.displayName,
       email: user.email,
       phoneNumber: user.phoneNumber,
+      grant_type: ACCESS_TOKEN,
     });
 
     const refresh_token = generateRefresh_Token({
@@ -172,6 +193,7 @@ export const refresh = async (token: string) => {
       displayName: user.displayName,
       email: user.email,
       phoneNumber: user.phoneNumber,
+      grant_type: REFRESH_TOKEN,
     });
 
     await blacklistRefresh_Token(token);

@@ -1,4 +1,4 @@
-import { Schema, model, ObjectId, Types } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 export interface UserModel {
   email: string;

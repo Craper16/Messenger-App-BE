@@ -6,6 +6,7 @@ interface userJWTSignData {
   phoneNumber: number;
   displayName: string;
   _id: string;
+  grant_type?: string;
 }
 
 export const generateAccess_Token = ({
@@ -13,6 +14,7 @@ export const generateAccess_Token = ({
   email,
   displayName,
   phoneNumber,
+  grant_type,
 }: userJWTSignData) => {
   return sign(
     {
@@ -20,6 +22,7 @@ export const generateAccess_Token = ({
       email: email,
       displayName: displayName,
       phoneNumber: phoneNumber,
+      grant_type: grant_type,
     },
     process.env.SECRET,
     { expiresIn: '1h' }
@@ -31,6 +34,7 @@ export const generateRefresh_Token = ({
   email,
   displayName,
   phoneNumber,
+  grant_type,
 }: userJWTSignData) => {
   return sign(
     {
@@ -38,6 +42,7 @@ export const generateRefresh_Token = ({
       email: email,
       displayName: displayName,
       phoneNumber: phoneNumber,
+      grant_type: grant_type,
     },
     process.env.SECRET,
     {
