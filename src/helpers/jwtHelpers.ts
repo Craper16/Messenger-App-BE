@@ -1,4 +1,5 @@
 import { sign } from 'jsonwebtoken';
+import { BlackListedToken } from '../models/token';
 
 interface userJWTSignData {
   email: string;
@@ -43,4 +44,12 @@ export const generateRefresh_Token = ({
       expiresIn: '365d',
     }
   );
+};
+
+export const blacklistRefresh_Token = async (refresh_token: string) => {
+  const blackListedToken = await new BlackListedToken({
+    blackListedToken: refresh_token,
+  });
+
+  await blackListedToken.save();
 };

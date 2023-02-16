@@ -1,4 +1,5 @@
 import {
+  blacklistRefresh_Token,
   generateAccess_Token,
   generateRefresh_Token,
 } from '../helpers/jwtHelpers';
@@ -6,6 +7,7 @@ import { hash, compare } from 'bcryptjs';
 
 import { User, UserModel } from '../models/user';
 import { JwtPayload, verify } from 'jsonwebtoken';
+import { BlackListedToken } from '../models/token';
 
 export const signUp = async ({
   displayName,
@@ -142,6 +144,17 @@ export const refresh = async (token: string) => {
     }
 
     const user = await User.findById(verifiedUserId);
+    const tokenAlreadyUsed = await BlackListedToken.find({
+      blackListedToken: token,
+    });
+
+    if (tokenAlreadyUsed.length !== 0) {
+      return {
+        message: 'refresh token has already been used before',
+        name: 'Already Used',
+        status: 404,
+      };
+    }
 
     if (!user) {
       return { message: 'No user found', name: 'Not found', status: 404 };
@@ -160,6 +173,8 @@ export const refresh = async (token: string) => {
       email: user.email,
       phoneNumber: user.phoneNumber,
     });
+
+    await blacklistRefresh_Token(token);
 
     return { access_token, refresh_token, user, status: 200 };
   } catch (error) {
