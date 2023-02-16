@@ -51,3 +51,22 @@ export const SignInValidations = [
     .notEmpty()
     .withMessage('Password must not be empty'),
 ];
+
+export const UpdateUserValidations = [
+  check('displayName')
+    .isString()
+    .withMessage('Display name must be a string')
+    .notEmpty()
+    .withMessage('Display name is required')
+    .trim()
+    .toLowerCase()
+    .isLength({ min: 3, max: 13 })
+    .withMessage('Display name must be between 3 and 13 characters long'),
+  check('phoneNumber')
+    .isNumeric()
+    .withMessage('Phone number must be a number')
+    .notEmpty()
+    .withMessage('Phone number must not be empty')
+    .isLength({ max: 8 })
+    .withMessage('Phone number must not exceed 8 numbers'),
+];

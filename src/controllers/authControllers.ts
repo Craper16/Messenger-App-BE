@@ -3,7 +3,14 @@ import { validationResult } from 'express-validator';
 import { ErrorResponse } from '../app';
 import { checkForValidationErrors } from '../helpers/validationHelpers';
 import { UserModel } from '../models/user';
-import { refresh, SignIn, signUp } from '../services/authServices';
+import {
+  changeUserPassword,
+  getUserData,
+  refresh,
+  SignIn,
+  signUp,
+  updateUser,
+} from '../services/authServices';
 
 export const SignUpUser: RequestHandler = async (req, res, next) => {
   const body = req.body as UserModel;
@@ -87,6 +94,97 @@ export const RefreshTokens: RequestHandler = async (req, res, next) => {
       email: refreshUser.user?.email,
       phoneNumber: refreshUser.user?.phoneNumber,
       displayName: refreshUser.user?.displayName,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const GetUserData: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await getUserData(req.userId);
+
+    if (data?.status !== 200) {
+      const error: ErrorResponse = {
+        message: data?.message!,
+        name: data?.name!,
+        status: data?.status!,
+      };
+      throw error;
+    }
+
+    return res.status(data.status).json({
+      email: data.user?.email,
+      phoneNumber: data?.user?.phoneNumber,
+      displayName: data.user?.displayName,
+    });
+  } catch (error) {
+    next();
+  }
+};
+
+export const ChangeUserPassword: RequestHandler = async (req, res, next) => {
+  const { newPassword, oldPassword } = req.body as {
+    oldPassword: string;
+    newPassword: string;
+  };
+  try {
+    const ChangePassword = await changeUserPassword({
+      newPassword,
+      oldPassword,
+      userId: req.userId,
+    });
+
+    if (ChangePassword?.status !== 200) {
+      const error: ErrorResponse = {
+        message: ChangePassword?.message!,
+        name: ChangePassword?.name!,
+        status: ChangePassword?.status!,
+      };
+      throw error;
+    }
+
+    return res.status(ChangePassword.status).json({
+      message: ChangePassword.message,
+      userId: ChangePassword.user?._id,
+      email: ChangePassword.user?.email,
+      phoneNumber: ChangePassword.user?.phoneNumber,
+      displayName: ChangePassword.user?.displayName,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const UpdateUserInfo: RequestHandler = async (req, res, next) => {
+  const { displayName, phoneNumber } = req.body as {
+    displayName: string;
+    phoneNumber: number;
+  };
+  try {
+    checkForValidationErrors(validationResult(req));
+
+    const UpdateUser = await updateUser({
+      displayName,
+      phoneNumber,
+      userId: req.userId,
+    });
+
+    if (UpdateUser?.status !== 200) {
+      const error: ErrorResponse = {
+        message: UpdateUser?.message!,
+        name: UpdateUser?.name!,
+        status: UpdateUser?.status!,
+      };
+      throw error;
+    }
+
+    return res.status(UpdateUser.status).json({
+      message: UpdateUser.message,
+      userId: UpdateUser.user?._id,
+      email: UpdateUser.user?.email,
+      phoneNumber: UpdateUser.user?.phoneNumber,
+      displayName: UpdateUser.user?.displayName,
     });
   } catch (error) {
     next(error);

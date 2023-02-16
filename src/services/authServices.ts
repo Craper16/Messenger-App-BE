@@ -134,7 +134,6 @@ export const refresh = async (token: string) => {
         });
       }
       const { userId } = decoded as JwtPayload;
-      console.log(decoded);
       verifiedUserId = userId;
     });
 
@@ -163,6 +162,93 @@ export const refresh = async (token: string) => {
     });
 
     return { access_token, refresh_token, user, status: 200 };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getUserData = async (userId: string) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return { message: 'User not found', name: 'Not Found', status: 404 };
+    }
+
+    return { user: user, status: 200 };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const changeUserPassword = async ({
+  oldPassword,
+  newPassword,
+  userId,
+}: {
+  oldPassword: string;
+  newPassword: string;
+  userId: string;
+}) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return { message: 'User not found', name: 'Not Found', status: 404 };
+    }
+
+    const isCorrectOldPassword = await compare(oldPassword, user.password);
+
+    if (!isCorrectOldPassword) {
+      return {
+        message: 'Incorrect old password entered',
+        name: 'Forbidden',
+        status: 403,
+      };
+    }
+
+    const hashedNewPassword = await hash(newPassword, 12);
+
+    user.password = hashedNewPassword;
+
+    const result = await user.save();
+
+    return {
+      user: result,
+      status: 200,
+      message: 'Password changed successfully',
+    };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateUser = async ({
+  displayName,
+  phoneNumber,
+  userId,
+}: {
+  userId: string;
+  displayName: string;
+  phoneNumber: number;
+}) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return { message: 'User not found', name: 'Not Found', status: 404 };
+    }
+
+    user.displayName = displayName;
+    user.phoneNumber = phoneNumber;
+
+    const result = await user.save();
+
+    return {
+      user: result,
+      status: 200,
+      message: 'Information updated successfully',
+    };
   } catch (error) {
     console.error(error);
   }

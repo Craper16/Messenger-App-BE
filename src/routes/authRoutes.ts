@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import {
+  ChangeUserPassword,
+  GetUserData,
   RefreshTokens,
   SignInUser,
   SignUpUser,
+  UpdateUserInfo,
 } from '../controllers/authControllers';
+import { isAuth } from '../middlewares/isAuth';
 import {
   SignInValidations,
   SignUpValidations,
@@ -17,10 +21,10 @@ router.post('/signin', SignInValidations, SignInUser);
 
 router.post('/refresh', RefreshTokens);
 
-router.get('/me');
+router.get('/me', isAuth, GetUserData);
 
-router.put('/me/change-password');
+router.put('/me/change-password', isAuth, ChangeUserPassword);
 
-router.put('/update-user');
+router.put('/me/update', isAuth, UpdateUserInfo);
 
 export default router;
