@@ -234,9 +234,24 @@ export const updateUser = async ({
 }) => {
   try {
     const user = await User.findById(userId);
+    const usersWithSameNumber = await User.find({
+      phoneNumber: phoneNumber,
+    });
+
+    const existsUsersWithSamePhoneNumber = usersWithSameNumber.filter(
+      (sameUser) => sameUser._id.toString() !== user?._id.toString()
+    );
 
     if (!user) {
       return { message: 'User not found', name: 'Not Found', status: 404 };
+    }
+
+    if (existsUsersWithSamePhoneNumber.length !== 0) {
+      return {
+        message: 'A user with this phone number already exists',
+        name: 'Forbiden',
+        status: 403,
+      };
     }
 
     user.displayName = displayName;

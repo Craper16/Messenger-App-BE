@@ -11,6 +11,7 @@ import { isAuth } from '../middlewares/isAuth';
 import {
   SignInValidations,
   SignUpValidations,
+  UpdateUserValidations,
 } from '../validations/authValidations';
 
 const router = Router();
@@ -25,6 +26,6 @@ router.get('/me', isAuth, GetUserData);
 
 router.put('/me/change-password', isAuth, ChangeUserPassword);
 
-router.put('/me/update', isAuth, UpdateUserInfo);
+router.put('/me/update', UpdateUserValidations, isAuth, UpdateUserInfo);
 
 export default router;
