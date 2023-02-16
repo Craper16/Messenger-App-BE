@@ -10,11 +10,16 @@ const signUp = async (data) => {
         let user = await user_1.User.findOne({ email: email });
         const userPhoneCheck = await user_1.User.findOne({ phoneNumber: phoneNumber });
         if (user) {
-            return { message: 'A User with this email already exists', status: 403 };
+            return {
+                message: 'A User with this email already exists',
+                name: 'Already Exists',
+                status: 403,
+            };
         }
         if (userPhoneCheck) {
             return {
                 message: 'A user with this phoneNumber already exists',
+                name: 'Already Exists',
                 status: 403,
             };
         }
@@ -42,6 +47,7 @@ const signUp = async (data) => {
             user: result,
             access_token: access_token,
             refresh_token: refresh_token,
+            status: 201,
         };
     }
     catch (error) {

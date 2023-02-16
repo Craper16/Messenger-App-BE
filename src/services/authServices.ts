@@ -14,12 +14,17 @@ export const signUp = async (data: UserModel) => {
     const userPhoneCheck = await User.findOne({ phoneNumber: phoneNumber });
 
     if (user) {
-      return { message: 'A User with this email already exists', status: 403 };
+      return {
+        message: 'A User with this email already exists',
+        name: 'Already Exists',
+        status: 403,
+      };
     }
 
     if (userPhoneCheck) {
       return {
         message: 'A user with this phoneNumber already exists',
+        name: 'Already Exists',
         status: 403,
       };
     }
@@ -53,6 +58,7 @@ export const signUp = async (data: UserModel) => {
       user: result,
       access_token: access_token,
       refresh_token: refresh_token,
+      status: 201,
     };
   } catch (error) {
     console.error(error);

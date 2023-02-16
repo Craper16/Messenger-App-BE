@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { SignUpUser } from '../controllers/authControllers';
+import { SignUpValidations } from '../validations/authValidations';
 
 const router = Router();
 
-router.post('/signup');
+router.post('/signup', SignUpValidations, SignUpUser);
 
 router.post('/signin');
 
