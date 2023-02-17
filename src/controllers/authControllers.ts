@@ -23,7 +23,7 @@ export const SignUpUser: RequestHandler = async (req, res, next) => {
 
     if (signUpUser?.status !== 201) {
       const error: ErrorResponse = {
-        message: signUpUser?.message!,
+        message: signUpUser?.name!,
         name: signUpUser?.name!,
         status: signUpUser?.status!,
         data: {
@@ -56,7 +56,7 @@ export const SignInUser: RequestHandler = async (req, res, next) => {
 
     if (signInUser?.status !== 200) {
       const error: ErrorResponse = {
-        message: signInUser?.message!,
+        message: signInUser?.name!,
         name: signInUser?.name!,
         status: signInUser?.status!,
         data: {
@@ -88,7 +88,7 @@ export const RefreshTokens: RequestHandler = async (req, res, next) => {
 
     if (refreshUser?.status !== 200) {
       const error: ErrorResponse = {
-        message: refreshUser?.message!,
+        message: refreshUser?.name!,
         name: refreshUser?.name!,
         status: refreshUser?.status!,
         data: {
@@ -118,7 +118,7 @@ export const GetUserData: RequestHandler = async (req, res, next) => {
 
     if (data?.status !== 200) {
       const error: ErrorResponse = {
-        message: data?.message!,
+        message: data?.name!,
         name: data?.name!,
         status: data?.status!,
         data: { message: data?.message!, status: data?.status! },
@@ -150,7 +150,7 @@ export const ChangeUserPassword: RequestHandler = async (req, res, next) => {
 
     if (ChangePassword?.status !== 200) {
       const error: ErrorResponse = {
-        message: ChangePassword?.message!,
+        message: ChangePassword?.name!,
         name: ChangePassword?.name!,
         status: ChangePassword?.status!,
         data: {
@@ -189,7 +189,7 @@ export const UpdateUserInfo: RequestHandler = async (req, res, next) => {
 
     if (UpdateUser?.status !== 200) {
       const error: ErrorResponse = {
-        message: UpdateUser?.message!,
+        message: UpdateUser?.name!,
         name: UpdateUser?.name!,
         status: UpdateUser?.status!,
         data: {
