@@ -15,7 +15,7 @@ import authRoutes from './routes/authRoutes';
 
 export interface ErrorResponse extends Error {
   status: number;
-  data?: any;
+  data?: { message: string; status: number; reason?: string };
 }
 
 const app = express();

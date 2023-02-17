@@ -26,6 +26,10 @@ export const SignUpUser: RequestHandler = async (req, res, next) => {
         message: signUpUser?.message!,
         name: signUpUser?.name!,
         status: signUpUser?.status!,
+        data: {
+          message: signUpUser?.message!,
+          status: signUpUser?.status!,
+        },
       };
       throw error;
     }
@@ -55,6 +59,10 @@ export const SignInUser: RequestHandler = async (req, res, next) => {
         message: signInUser?.message!,
         name: signInUser?.name!,
         status: signInUser?.status!,
+        data: {
+          message: signInUser?.message!,
+          status: signInUser?.status!,
+        },
       };
       throw error;
     }
@@ -83,6 +91,10 @@ export const RefreshTokens: RequestHandler = async (req, res, next) => {
         message: refreshUser?.message!,
         name: refreshUser?.name!,
         status: refreshUser?.status!,
+        data: {
+          message: refreshUser?.message!,
+          status: refreshUser?.status!,
+        },
       };
       throw error;
     }
@@ -109,6 +121,7 @@ export const GetUserData: RequestHandler = async (req, res, next) => {
         message: data?.message!,
         name: data?.name!,
         status: data?.status!,
+        data: { message: data?.message!, status: data?.status! },
       };
       throw error;
     }
@@ -140,6 +153,10 @@ export const ChangeUserPassword: RequestHandler = async (req, res, next) => {
         message: ChangePassword?.message!,
         name: ChangePassword?.name!,
         status: ChangePassword?.status!,
+        data: {
+          message: ChangePassword?.message!,
+          status: ChangePassword?.status!,
+        },
       };
       throw error;
     }
@@ -175,6 +192,10 @@ export const UpdateUserInfo: RequestHandler = async (req, res, next) => {
         message: UpdateUser?.message!,
         name: UpdateUser?.name!,
         status: UpdateUser?.status!,
+        data: {
+          message: UpdateUser?.message!,
+          status: UpdateUser?.status!,
+        },
       };
       throw error;
     }

@@ -172,7 +172,7 @@ export const refresh = async (token: string) => {
       return {
         message: 'refresh token has already been used before',
         name: 'Already Used',
-        status: 404,
+        status: 403,
       };
     }
 
