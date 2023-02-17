@@ -6,7 +6,7 @@ interface userJWTSignData {
   phoneNumber: number;
   displayName: string;
   _id: string;
-  grant_type?: string;
+  grant_type: string;
 }
 
 export const generateAccess_Token = ({
