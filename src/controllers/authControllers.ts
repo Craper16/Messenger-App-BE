@@ -127,6 +127,7 @@ export const GetUserData: RequestHandler = async (req, res, next) => {
     }
 
     return res.status(data.status).json({
+      userId: data?.user?._id,
       email: data.user?.email,
       phoneNumber: data?.user?.phoneNumber,
       displayName: data.user?.displayName,
@@ -201,7 +202,6 @@ export const UpdateUserInfo: RequestHandler = async (req, res, next) => {
     }
 
     return res.status(UpdateUser.status).json({
-      message: UpdateUser.message,
       userId: UpdateUser.user?._id,
       email: UpdateUser.user?.email,
       phoneNumber: UpdateUser.user?.phoneNumber,
