@@ -33,8 +33,8 @@ export const SignUpValidations = [
     .withMessage('Phone number must be a number')
     .notEmpty()
     .withMessage('Phone number must not be empty')
-    .isLength({ max: 8 })
-    .withMessage('Phone number must not exceed 8 numbers'),
+    .isLength({ max: 8, min: 8 })
+    .withMessage('Phone number must be 8 numbers'),
 ];
 
 export const SignInValidations = [
