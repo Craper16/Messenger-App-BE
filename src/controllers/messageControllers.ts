@@ -31,7 +31,9 @@ export const SendMessage: RequestHandler = async (req, res, next) => {
       throw error;
     }
 
-    const IO = await ioIntance.getIO();
+    ioIntance.getIO().emit('message', content);
+
+    return res.status(sendMessageToUser.status);
   } catch (error) {
     next(error);
   }
