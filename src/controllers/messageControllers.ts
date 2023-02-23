@@ -6,7 +6,6 @@ import {
   sendMessage,
 } from '../services/messageServices';
 import {} from 'socket.io';
-import { ioIntance } from '../socket';
 
 export const SendMessage: RequestHandler = async (req, res, next) => {
   const { content } = req.body as { content: string };
@@ -30,8 +29,6 @@ export const SendMessage: RequestHandler = async (req, res, next) => {
       };
       throw error;
     }
-
-    ioIntance.getIO().emit('message', content);
 
     return res.status(sendMessageToUser.status);
   } catch (error) {

@@ -14,6 +14,7 @@ import { ioIntance } from './socket';
 
 import authRoutes from './routes/authRoutes';
 import messageRoutes from './routes/messagesRoutes';
+import { verify } from 'jsonwebtoken';
 
 export interface ErrorResponse extends Error {
   status: number;
@@ -70,10 +71,36 @@ connect(process.env.DB_URI)
     const io = ioIntance.init(server, {
       cors: { origin: 'http://localhost:5173', methods: ['GET', 'POST'] },
     });
-    io.on('connect', (socket) => {
-      console.log('Client connected');
+    io.use((socket, next) => {
+      if (socket.handshake.query && socket.handshake.query.access_token) {
+        verify(
+          socket.handshake.query.access_token as string,
+          process.env.SECRET,
+          (error, decoded) => {
+            if (error) return next(new Error('Authentication error'));
+            next();
+          }
+        );
+      } else {
+        next(new Error('Authentication error'));
+      }
+    }).on('connection', (socket) => {
+      console.log(`client connected ${socket.id}`);
+      socket.on(
+        'send_message',
+        (data: {
+          content: string;
+          sender: string;
+          receiver: string;
+          createdAt: Date;
+          updatedAt: Date;
+        }) => {
+          console.log(data);
+          socket.emit('receive_message', data);
+        }
+      );
       socket.on('disconnect', () => {
-        console.log('client disconnected');
+        console.log(`client disconnected ${socket.id}`);
       });
     });
   })
