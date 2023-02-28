@@ -106,7 +106,7 @@ export const deleteServer = async ({
     }
 
     if (server.owner.toString() !== user._id.toString()) {
-      return { message: 'Unauthorized', name: 'Unauthorized', status: 401 };
+      return { message: 'Not Authorized', name: 'Not Authorized', status: 402 };
     }
 
     if (server.name !== serverName) {
@@ -151,7 +151,7 @@ export const updateServer = async ({
     }
 
     if (server.owner.toString() !== user._id.toString()) {
-      return { message: 'Unauthorized', name: 'Unauthorized', status: 401 };
+      return { message: 'Not authorized', name: 'Not Authorized', status: 402 };
     }
 
     server.name = newServerName;
@@ -253,6 +253,74 @@ export const leaveServer = async ({
     const result = await server.save();
 
     return { server: result, message: `Left ${server.name}`, status: 200 };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const kickFromServer = async ({
+  kickedUserId,
+  serverId,
+  userId,
+}: {
+  serverId: string;
+  kickedUserId: string;
+  userId: string;
+}) => {
+  try {
+    const server = await Server.findById(serverId);
+    const user = await User.findById(userId);
+    const kickedUser = await User.findById(kickedUserId);
+
+    const checkIfUserAlreadyInServer = server?.members.filter(
+      (member) => member.toString() === kickedUser?._id.toString()
+    );
+
+    if (!server) {
+      return { message: 'Server not found', name: 'Not found', status: 404 };
+    }
+
+    if (!user) {
+      return { message: 'User not found', name: 'Not found', status: 404 };
+    }
+
+    if (!kickedUser) {
+      return { message: 'User not found', name: 'Not found', status: 404 };
+    }
+
+    if (checkIfUserAlreadyInServer?.length === 0) {
+      return {
+        message: 'User already not in server',
+        name: 'Not in server',
+        status: 403,
+      };
+    }
+
+    if (user._id.toString() !== server.owner.toString()) {
+      return { message: 'Not authorized', name: 'Not Authorized', status: 402 };
+    }
+
+    if (user._id.toString() === kickedUser._id.toString()) {
+      return {
+        message: 'Cannot kick yourself from server',
+        name: 'Forbidden',
+        status: 403,
+      };
+    }
+    server.members = [
+      ...server?.members.filter(
+        (member) => member.toString() !== kickedUser?._id.toString()
+      ),
+    ];
+
+    const result = await server.save();
+
+    return {
+      server: result,
+      message: `Kicked ${kickedUser.displayName} from ${server.name}`,
+      kickedUser: kickedUser,
+      status: 200,
+    };
   } catch (error) {
     console.error(error);
   }

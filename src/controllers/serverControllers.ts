@@ -7,6 +7,7 @@ import {
   getServer,
   getUserServers,
   joinServer,
+  kickFromServer,
   leaveServer,
   searchServers,
   updateServer,
@@ -241,6 +242,40 @@ export const LeaveServer: RequestHandler = async (req, res, next) => {
     return res.status(leaveServerResponse.status).json({
       message: leaveServerResponse.message,
       server: leaveServerResponse.server,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const KickFromServer: RequestHandler = async (req, res, next) => {
+  try {
+    const { serverId } = req.params as { serverId: string };
+    const { kickedUserId } = req.body as { kickedUserId: string };
+
+    const kickFromServerResponse = await kickFromServer({
+      kickedUserId,
+      serverId,
+      userId: req.userId,
+    });
+
+    if (kickFromServerResponse?.status !== 200) {
+      const error: ErrorResponse = {
+        message: kickFromServerResponse?.name!,
+        name: kickFromServerResponse?.name!,
+        status: kickFromServerResponse?.status!,
+        data: {
+          message: kickFromServerResponse?.message!,
+          status: kickFromServerResponse?.status!,
+        },
+      };
+      throw error;
+    }
+
+    return res.status(kickFromServerResponse.status).json({
+      message: kickFromServerResponse.message,
+      server: kickFromServerResponse.server,
+      kickedUser: kickFromServerResponse.kickedUser,
     });
   } catch (error) {
     next(error);

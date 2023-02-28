@@ -6,6 +6,7 @@ import {
   GetServer,
   GetUserServers,
   JoinServer,
+  KickFromServer,
   LeaveServer,
   SearchServers,
   UpdateServer,
@@ -37,5 +38,7 @@ router.delete('/delete/:serverId', isAuth, DeleteServer);
 router.put('/join/:serverId', isAuth, JoinServer);
 
 router.put('/leave/:serverId', isAuth, LeaveServer);
+
+router.put('/kick/:serverId', isAuth, KickFromServer);
 
 export default router;
