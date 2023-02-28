@@ -13,33 +13,12 @@ import { connect } from 'mongoose';
 import { ioIntance } from './socket';
 
 import authRoutes from './routes/authRoutes';
-import messageRoutes from './routes/messagesRoutes';
+import serverRoutes from './routes/serverRoutes';
 import { verify } from 'jsonwebtoken';
 
 export interface ErrorResponse extends Error {
   status: number;
   data?: { message: string; status: number; reason?: string };
-}
-
-interface ServerToClientEvents {
-  noArg: () => void;
-  basicEmit: (a: number, b: string, c: Buffer) => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
-}
-
-interface ClientToServerEvents {
-  hello: () => void;
-}
-
-interface InterServerEvents {
-  ping: () => void;
-}
-
-interface SocketData {
-  email: string;
-  displayName: string;
-  phoneNumber: number;
-  userId: string;
 }
 
 const app = express();
@@ -49,7 +28,7 @@ app.use(urlencoded({ extended: true }));
 app.use(cors());
 
 app.use('/auth', authRoutes);
-app.use('/message', messageRoutes);
+app.use('/server', serverRoutes);
 
 app.use('*', (req: Request, res: Response) => {
   return res.status(404).json({ message: 'Endpoint doesnt exist' });
@@ -95,8 +74,7 @@ connect(process.env.DB_URI)
           createdAt: Date;
           updatedAt: Date;
         }) => {
-          console.log(data);
-          socket.emit('receive_message', data);
+          socket.broadcast.emit('receive_message', data);
         }
       );
       socket.on('disconnect', () => {
