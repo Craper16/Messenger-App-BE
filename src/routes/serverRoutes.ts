@@ -11,10 +11,11 @@ import {
   UpdateServer,
 } from '../controllers/serverControllers';
 import { isAuth } from '../middlewares/isAuth';
+import { addServerValidations } from '../validations/serverValidations';
 
 const router = Router();
 
-router.post('/create-server', isAuth, AddServer);
+router.post('/create-server', isAuth, addServerValidations, AddServer);
 
 router.get('/me', isAuth, GetUserServers);
 
@@ -24,7 +25,12 @@ router.get('/search', isAuth, SearchServers);
 
 router.get('/:serverId', isAuth, GetServer);
 
-router.put('/update-server/:serverId', isAuth, UpdateServer);
+router.put(
+  '/update-server/:serverId',
+  isAuth,
+  addServerValidations,
+  UpdateServer
+);
 
 router.delete('/delete/:serverId', isAuth, DeleteServer);
 
