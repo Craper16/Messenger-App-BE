@@ -22,7 +22,7 @@ router.get('/me', isAuth, GetUserServers);
 
 router.get('/all', isAuth, GetAllServers);
 
-router.get('/search', isAuth, SearchServers);
+router.post('/search', isAuth, SearchServers);
 
 router.get('/:serverId', isAuth, GetServer);
 

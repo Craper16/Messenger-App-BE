@@ -80,6 +80,12 @@ connect(process.env.DB_URI)
       socket.on('disconnect', () => {
         console.log(`client disconnected ${socket.id}`);
       });
+      socket.on('join_servers', (rooms: string[]) => {
+        console.log(
+          `User with id: ${socket.id} joined ${rooms.map((room) => room)}`
+        );
+        socket.join(rooms);
+      });
     });
   })
   .catch((error) => console.log(error));

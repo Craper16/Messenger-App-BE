@@ -20,7 +20,7 @@ export const addServer = async ({
     const server = new Server({
       name: name,
       owner: user._id,
-      members: [user._id],
+      members: [user],
       messages: [],
     });
 
@@ -52,7 +52,7 @@ export const getUserServers = async (ownerId: string) => {
       return { message: 'User not Found', name: 'Not found', status: 404 };
     }
 
-    const servers = await Server.find({ members: user._id });
+    const servers = await Server.find({ members: user });
 
     return { servers: servers, status: 200 };
   } catch (error) {
