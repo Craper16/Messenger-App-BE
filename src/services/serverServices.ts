@@ -1,5 +1,6 @@
 import { Server } from '../models/server';
 import { User } from '../models/user';
+import { MessageModel } from '../models/server';
 
 const PER_PAGE = 10;
 
@@ -76,7 +77,9 @@ export const getServer = async (serverId: string) => {
 
 export const searchServers = async (serverName: string) => {
   try {
-    const servers = await Server.find({ name: serverName });
+    const servers = await Server.find({
+      name: { $regex: serverName, $options: 'i' },
+    });
 
     return { servers: servers, status: 200 };
   } catch (error) {
@@ -321,6 +324,29 @@ export const kickFromServer = async ({
       kickedUser: kickedUser,
       status: 200,
     };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addMessageToServer = async (message: MessageModel) => {
+  try {
+    const user = await User.findById(message.sender._id);
+    const server = await Server.findById(message.server._id);
+
+    if (!user) {
+      return { message: 'User not found', name: 'Not Found', status: 404 };
+    }
+
+    if (!server) {
+      return { message: 'Server not found', name: 'Not Found', status: 404 };
+    }
+
+    server.messages = [...server.messages, message];
+
+    const result = await server.save();
+
+    return { server: result, status: 200 };
   } catch (error) {
     console.error(error);
   }

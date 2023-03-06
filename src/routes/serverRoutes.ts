@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  AddMessageToServer,
   AddServer,
   DeleteServer,
   GetAllServers,
@@ -40,5 +41,7 @@ router.put('/join/:serverId', isAuth, JoinServer);
 router.put('/leave/:serverId', isAuth, LeaveServer);
 
 router.put('/kick/:serverId', isAuth, KickFromServer);
+
+router.put('/add-message', isAuth, AddMessageToServer);
 
 export default router;

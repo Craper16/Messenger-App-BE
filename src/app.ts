@@ -16,6 +16,7 @@ import authRoutes from './routes/authRoutes';
 import serverRoutes from './routes/serverRoutes';
 import { verify } from 'jsonwebtoken';
 
+import { MessageModel } from './models/server';
 export interface ErrorResponse extends Error {
   status: number;
   data?: { message: string; status: number; reason?: string };
@@ -65,18 +66,10 @@ connect(process.env.DB_URI)
       }
     }).on('connection', (socket) => {
       console.log(`client connected ${socket.id}`);
-      socket.on(
-        'send_message',
-        (data: {
-          content: string;
-          sender: string;
-          receiver: string;
-          createdAt: Date;
-          updatedAt: Date;
-        }) => {
-          socket.broadcast.emit('receive_message', data);
-        }
-      );
+      socket.on('send_message', (data: MessageModel) => {
+        console.log(data);
+        socket.to(data.server._id).emit('receive_message', data);
+      });
       socket.on('disconnect', () => {
         console.log(`client disconnected ${socket.id}`);
       });

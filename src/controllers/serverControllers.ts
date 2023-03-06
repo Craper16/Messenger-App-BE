@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import { ErrorResponse } from '../app';
+import { MessageModel } from '../models/server';
 import {
   addServer,
   deleteServer,
@@ -11,6 +12,7 @@ import {
   leaveServer,
   searchServers,
   updateServer,
+  addMessageToServer,
 } from '../services/serverServices';
 
 export const GetAllServers: RequestHandler = async (req, res, next) => {
@@ -275,6 +277,38 @@ export const KickFromServer: RequestHandler = async (req, res, next) => {
       server: kickFromServerResponse.server,
       kickedUser: kickFromServerResponse.kickedUser,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const AddMessageToServer: RequestHandler = async (req, res, next) => {
+  try {
+    const { content, sender, sentAt, server } = req.body as MessageModel;
+
+    const addMessageToServerResponse = await addMessageToServer({
+      content,
+      sender,
+      sentAt,
+      server,
+    });
+
+    if (addMessageToServerResponse?.status !== 200) {
+      const error: ErrorResponse = {
+        message: addMessageToServerResponse?.name!,
+        name: addMessageToServerResponse?.name!,
+        status: addMessageToServerResponse?.status!,
+        data: {
+          message: addMessageToServerResponse?.message!,
+          status: addMessageToServerResponse?.status!,
+        },
+      };
+      throw error;
+    }
+
+    return res
+      .status(addMessageToServerResponse.status)
+      .json({ server: addMessageToServerResponse.server });
   } catch (error) {
     next(error);
   }

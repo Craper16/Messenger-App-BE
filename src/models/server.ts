@@ -1,9 +1,13 @@
 import { model, ObjectId, Schema, Types } from 'mongoose';
-
-interface MessageModel {
+export interface MessageModel {
   content: string;
-  receiver: ObjectId;
-  sender: ObjectId;
+  server: ServerModel;
+  sender: {
+    _id: string;
+    displayName: string;
+    phoneNumber: number;
+    email: string;
+  };
   sentAt: Date;
 }
 
@@ -12,6 +16,7 @@ export interface ServerModel {
   name: string;
   owner: ObjectId;
   messages: MessageModel[];
+  _id: string;
 }
 
 const serverSchema = new Schema<ServerModel>({
