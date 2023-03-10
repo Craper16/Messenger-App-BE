@@ -284,13 +284,13 @@ export const KickFromServer: RequestHandler = async (req, res, next) => {
 
 export const AddMessageToServer: RequestHandler = async (req, res, next) => {
   try {
-    const { content, sender, sentAt, server } = req.body as MessageModel;
+    const { content, sender, sentAt, serverId } = req.body as MessageModel;
 
     const addMessageToServerResponse = await addMessageToServer({
       content,
       sender,
       sentAt,
-      server,
+      serverId,
     });
 
     if (addMessageToServerResponse?.status !== 200) {

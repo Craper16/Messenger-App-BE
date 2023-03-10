@@ -332,7 +332,7 @@ export const kickFromServer = async ({
 export const addMessageToServer = async (message: MessageModel) => {
   try {
     const user = await User.findById(message.sender._id);
-    const server = await Server.findById(message.server._id);
+    const server = await Server.findById(message.serverId);
 
     if (!user) {
       return { message: 'User not found', name: 'Not Found', status: 404 };

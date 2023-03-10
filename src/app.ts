@@ -68,7 +68,7 @@ connect(process.env.DB_URI)
       console.log(`client connected ${socket.id}`);
       socket.on('send_message', (data: MessageModel) => {
         console.log(data);
-        socket.to(data.server._id).emit('receive_message', data);
+        socket.to(data.serverId).emit('receive_message', data);
       });
       socket.on('disconnect', () => {
         console.log(`client disconnected ${socket.id}`);
