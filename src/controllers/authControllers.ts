@@ -202,6 +202,7 @@ export const UpdateUserInfo: RequestHandler = async (req, res, next) => {
     }
 
     return res.status(UpdateUser.status).json({
+      message: UpdateUser.message,
       userId: UpdateUser.user?._id,
       email: UpdateUser.user?.email,
       phoneNumber: UpdateUser.user?.phoneNumber,
