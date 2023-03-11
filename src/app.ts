@@ -79,6 +79,10 @@ connect(process.env.DB_URI)
         );
         socket.join(rooms);
       });
+      socket.on('leave_server', (room: string) => {
+        console.log(`User with id: ${socket.id} left ${room}`);
+        socket.leave(room);
+      });
     });
   })
   .catch((error) => console.log(error));

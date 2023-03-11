@@ -127,6 +127,8 @@ export const DeleteServer: RequestHandler = async (req, res, next) => {
     const { serverId } = req.params as { serverId: string };
     const { serverName } = req.body as { serverName: string };
 
+    console.log(serverName);
+
     const deleteServerResponse = await deleteServer({
       serverId,
       serverName,
