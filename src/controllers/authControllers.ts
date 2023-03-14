@@ -137,6 +137,31 @@ export const GetUserData: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const GetUserDataById: RequestHandler = async (req, res, next) => {
+  const { userId } = req.params as { userId: string };
+  try {
+    const data = await getUserData(userId);
+    if (data?.status !== 200) {
+      const error: ErrorResponse = {
+        message: data?.name!,
+        name: data?.name!,
+        status: data?.status!,
+        data: { message: data?.message!, status: data?.status! },
+      };
+      throw error;
+    }
+
+    return res.status(data.status).json({
+      userId: data?.user?._id,
+      email: data.user?.email,
+      phoneNumber: data?.user?.phoneNumber,
+      displayName: data.user?.displayName,
+    });
+  } catch (error) {
+    next();
+  }
+};
+
 export const ChangeUserPassword: RequestHandler = async (req, res, next) => {
   const { newPassword, oldPassword } = req.body as {
     oldPassword: string;
