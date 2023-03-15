@@ -102,7 +102,10 @@ export const AddServer: RequestHandler = async (req, res, next) => {
 
     return res
       .status(addServerAction.status)
-      .json({ server: addServerAction.server });
+      .json({
+        message: addServerAction.message,
+        server: addServerAction.server,
+      });
   } catch (error) {
     next(error);
   }

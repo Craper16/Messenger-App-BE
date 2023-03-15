@@ -21,13 +21,17 @@ export const addServer = async ({
     const server = new Server({
       name: name,
       owner: user._id,
-      members: [user],
+      members: [user._id],
       messages: [],
     });
 
     const result = await server.save();
 
-    return { server: result, status: 201 };
+    return {
+      message: 'Server created Successfuly',
+      server: result,
+      status: 201,
+    };
   } catch (error) {
     console.error(error);
   }
