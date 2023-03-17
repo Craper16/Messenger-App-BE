@@ -2,7 +2,7 @@ import { model, ObjectId, Schema, Types } from 'mongoose';
 export interface MessageModel {
   content: string;
   serverId: string;
-  serverName: string;
+  serverName?: string;
   sender: {
     _id: string;
     displayName: string;

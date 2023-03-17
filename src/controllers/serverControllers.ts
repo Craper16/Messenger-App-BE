@@ -100,12 +100,10 @@ export const AddServer: RequestHandler = async (req, res, next) => {
       throw error;
     }
 
-    return res
-      .status(addServerAction.status)
-      .json({
-        message: addServerAction.message,
-        server: addServerAction.server,
-      });
+    return res.status(addServerAction.status).json({
+      message: addServerAction.message,
+      server: addServerAction.server,
+    });
   } catch (error) {
     next(error);
   }
