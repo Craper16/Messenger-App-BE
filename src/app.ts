@@ -44,6 +44,8 @@ app.use(
   }
 );
 
+let usersJoined: { userId: string; socketId: string }[] = [];
+
 connect(process.env.DB_URI)
   .then(() => {
     console.log(`connected on ${process.env.PORT || 8081}`);
@@ -65,24 +67,54 @@ connect(process.env.DB_URI)
         next(new Error('Authentication error'));
       }
     }).on('connection', (socket) => {
-      console.log(`client connected ${socket.id}`);
+      usersJoined.push({
+        socketId: socket.id,
+        userId: socket.handshake.query.userId as string,
+      });
+      console.log(
+        `connected clients ${usersJoined.map((user) => user.userId)}`
+      );
       socket.on('send_message', (data: MessageModel) => {
-        console.log(data);
+        // console.log(data);
         socket.to(data.serverId).emit('receive_message', data);
       });
       socket.on('disconnect', () => {
-        console.log(`client disconnected ${socket.id}`);
+        usersJoined = usersJoined.filter(
+          (user) => user.userId !== (socket.handshake.query.userId as string)
+        );
+        // console.log(`client disconnected ${socket.handshake.query.userId}`);
       });
       socket.on('join_servers', (rooms: string[]) => {
-        console.log(
-          `User with id: ${socket.id} joined ${rooms.map((room) => room)}`
-        );
+        // console.log(
+        //   `User with id: ${socket.handshake.query.userId} joined ${rooms.map(
+        //     (room) => room
+        //   )}`
+        // );
         socket.join(rooms);
       });
       socket.on('leave_server', (room: string) => {
-        console.log(`User with id: ${socket.id} left ${room}`);
+        // console.log(
+        //   `User with id: ${socket.handshake.query.userId} left ${room}`
+        // );
         socket.leave(room);
       });
+      socket.on(
+        'kick_from_server',
+        (data: {
+          serverId: string;
+          kickedUserId: string;
+          serverName: string;
+        }) => {
+          console.log('We are kicking', data);
+          const user = usersJoined.find(
+            (userJoined) => userJoined.userId === data.kickedUserId
+          );
+          console.log(user);
+          if (!user) return;
+          console.log(`Kicked ${data?.kickedUserId} from ${data?.serverId}`);
+          socket.to(user?.socketId!).emit('user_kicked_from_server', data);
+        }
+      );
     });
   })
   .catch((error) => console.log(error));
