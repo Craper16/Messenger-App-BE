@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import { ErrorResponse } from '../app';
 import { MessageModel } from '../models/server';
+import { validationResult } from 'express-validator';
 import {
   addServer,
   deleteServer,
@@ -14,6 +15,7 @@ import {
   updateServer,
   addMessageToServer,
 } from '../services/serverServices';
+import { checkForValidationErrors } from '../helpers/validationHelpers';
 
 export const GetAllServers: RequestHandler = async (req, res, next) => {
   try {
@@ -84,6 +86,7 @@ export const GetServer: RequestHandler = async (req, res, next) => {
 export const AddServer: RequestHandler = async (req, res, next) => {
   try {
     const { name } = req.body as { name: string };
+    checkForValidationErrors(validationResult(req));
 
     const addServerAction = await addServer({ name, userId: req.userId });
 
@@ -128,8 +131,6 @@ export const DeleteServer: RequestHandler = async (req, res, next) => {
     const { serverId } = req.params as { serverId: string };
     const { serverName } = req.body as { serverName: string };
 
-    console.log(serverName);
-
     const deleteServerResponse = await deleteServer({
       serverId,
       serverName,
@@ -162,6 +163,9 @@ export const UpdateServer: RequestHandler = async (req, res, next) => {
   try {
     const { serverId } = req.params as { serverId: string };
     const { newServerName } = req.body as { newServerName: string };
+    console.log(req.body);
+
+    checkForValidationErrors(validationResult(req));
 
     const updateServerResponse = await updateServer({
       userId: req.userId,

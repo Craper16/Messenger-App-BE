@@ -13,7 +13,10 @@ import {
   UpdateServer,
 } from '../controllers/serverControllers';
 import { isAuth } from '../middlewares/isAuth';
-import { addServerValidations } from '../validations/serverValidations';
+import {
+  addServerValidations,
+  updateServerValidations,
+} from '../validations/serverValidations';
 
 const router = Router();
 
@@ -30,7 +33,7 @@ router.get('/:serverId', isAuth, GetServer);
 router.put(
   '/update-server/:serverId',
   isAuth,
-  addServerValidations,
+  updateServerValidations,
   UpdateServer
 );
 
